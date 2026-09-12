@@ -1,0 +1,29 @@
+<div class="picker-section">
+  <span class="picker-label">Icône</span>
+  <div class="icon-grid">
+    <button
+      type="button"
+      *ngFor="let icon of icons"
+      class="icon-swatch"
+      [class.selected]="icon === selectedIcon"
+      [style.color]="icon === selectedIcon ? selectedColor : null"
+      (click)="pickIcon(icon)"
+    >
+      <ion-icon [name]="icon"></ion-icon>
+    </button>
+  </div>
+</div>
+
+<div class="picker-section">
+  <span class="picker-label">Couleur</span>
+  <div class="color-row">
+    <button
+      type="button"
+      *ngFor="let color of colors"
+      class="color-swatch"
+      [class.selected]="color === selectedColor"
+      [style.background]="color"
+      (click)="pickColor(color)"
+    ></button>
+  </div>
+</div>

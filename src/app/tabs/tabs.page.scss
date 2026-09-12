@@ -1,0 +1,29 @@
+:host {
+  position: relative;
+  display: block;
+  height: 100%;
+}
+
+.fab-spacer {
+  pointer-events: none;
+  opacity: 0;
+}
+
+.center-fab {
+  position: absolute;
+  left: 50%;
+  bottom: 14px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border: none;
+  border-radius: 50%;
+  background: var(--gauge-normal, #7c4dff);
+  color: #fff;
+  font-size: 26px;
+  box-shadow: 0 6px 16px rgba(124, 77, 255, 0.4);
+  z-index: 10;
+}

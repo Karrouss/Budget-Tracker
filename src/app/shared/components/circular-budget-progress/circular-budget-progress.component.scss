@@ -1,0 +1,58 @@
+.gauge {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  flex-shrink: 0;
+
+  svg {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+  }
+
+  circle {
+    fill: none;
+    stroke-width: 8;
+    stroke-linecap: round;
+  }
+
+  .track {
+    stroke: var(--gauge-track, #ece5f7);
+  }
+
+  .value {
+    stroke: var(--gauge-normal, #7c4dff);
+    transition: stroke-dashoffset 0.4s ease, stroke 0.4s ease;
+  }
+
+  &.state-warning .value {
+    stroke: var(--gauge-warning, #ff9f43);
+  }
+
+  &.state-reached .value,
+  &.state-exceeded .value {
+    stroke: var(--gauge-exceeded, #ff5252);
+  }
+
+  .label {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    line-height: 1.1;
+  }
+
+  .value-text {
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--ion-text-color, #2b2140);
+  }
+
+  .caption {
+    font-size: 9px;
+    color: var(--ion-color-medium, #8a80a0);
+  }
+}

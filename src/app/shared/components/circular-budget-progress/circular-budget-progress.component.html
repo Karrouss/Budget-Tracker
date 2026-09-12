@@ -1,0 +1,18 @@
+<div class="gauge" [class]="'state-' + state">
+  <svg viewBox="0 0 80 80">
+    <circle class="track" cx="40" cy="40" r="34" />
+    <circle
+      class="value"
+      cx="40"
+      cy="40"
+      r="34"
+      [attr.stroke-dasharray]="circumference"
+      [attr.stroke-dashoffset]="dashOffset"
+      [style.stroke]="strokeColor"
+    />
+  </svg>
+  <div class="label">
+    <span class="value-text">{{ displayPercentage }}%</span>
+    <span class="caption">utilisé</span>
+  </div>
+</div>

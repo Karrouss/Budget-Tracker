@@ -1,0 +1,16 @@
+.expense-form-content {
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --padding-top: 16px;
+}
+
+.form-error {
+  color: var(--gauge-exceeded, #ff5252);
+  font-size: 13px;
+  margin-top: 8px;
+}
+
+.save-button {
+  margin-top: 24px;
+  --background: var(--gauge-normal, #7c4dff);
+}

@@ -1,0 +1,127 @@
+<ion-content [fullscreen]="true" class="dashboard-content">
+  <ion-refresher slot="fixed" (ionRefresh)="load(); $event.target.complete()">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <ng-container *ngIf="!loading && summary as s">
+    <div class="page-header">
+      <div class="titles">
+        <h1>Budget Tracker</h1>
+        <p>Gérez vos dépenses en toute simplicité</p>
+      </div>
+      <button type="button" class="icon-button settings-button" (click)="toggleTheme()">
+        <ion-icon [name]="(themeMode$ | async) === 'dark' ? 'sunny-outline' : 'moon-outline'"></ion-icon>
+      </button>
+    </div>
+
+    <div class="month-nav">
+      <button type="button" class="month-pill" (click)="openMonthPicker()">
+        <ion-icon name="calendar-outline"></ion-icon>
+        <span>{{ s.monthLabel }}</span>
+        <ion-icon name="chevron-down-outline" class="chevron"></ion-icon>
+      </button>
+      <button type="button" class="icon-button" [disabled]="!canGoToPreviousMonth" (click)="goToPreviousMonth()">
+        <ion-icon name="chevron-back-outline"></ion-icon>
+      </button>
+      <button type="button" class="icon-button" [disabled]="!canGoToNextMonth" (click)="goToNextMonth()">
+        <ion-icon name="chevron-forward-outline"></ion-icon>
+      </button>
+    </div>
+
+    <div class="summary-card">
+      <div class="summary-top">
+        <div class="summary-figures">
+          <span class="label">Dépenses totales</span>
+          <span class="total">{{ s.totalSpent | currencyFr }}</span>
+          <span class="subtext">sur {{ s.totalBudget | currencyFr }} de budget</span>
+        </div>
+        <div class="wallet-badge">
+          <ion-icon name="wallet"></ion-icon>
+        </div>
+      </div>
+
+      <div
+        class="message-bubble"
+        [class.state-ok]="s.percentage < 80"
+        [class.state-warning]="s.percentage >= 80 && s.percentage <= 100"
+        [class.state-over]="s.percentage > 100"
+      >
+        <ion-icon [name]="s.percentage > 100 ? 'alert-circle' : 'happy-outline'"></ion-icon>
+        <span *ngIf="s.percentage < 80">Vous êtes dans les clous !</span>
+        <span *ngIf="s.percentage >= 80 && s.percentage <= 100">Attention, ça chauffe !</span>
+        <span *ngIf="s.percentage > 100">Budget dépassé !</span>
+      </div>
+
+      <div class="summary-progress">
+        <div class="bar-track">
+          <div
+            class="bar-fill"
+            [class.state-warning]="s.percentage >= 80 && s.percentage <= 100"
+            [class.state-over]="s.percentage > 100"
+            [style.width.%]="s.totalBudget > 0 ? (s.percentage < 100 ? s.percentage : 100) : 0"
+          ></div>
+        </div>
+        <span class="percentage-label">{{ s.percentage | number: '1.0-0' }}%</span>
+      </div>
+    </div>
+
+    <div class="section-header" *ngIf="s.categories.length > 0">
+      <h2>Catégories</h2>
+    </div>
+
+    <div class="category-grid" *ngIf="s.categories.length > 0; else emptyState">
+      <div
+        class="category-card"
+        *ngFor="let c of s.categories; let i = index"
+        [style.background]="'color-mix(in srgb, ' + (c.color || fallbackColor(i)) + ' 20%, white)'"
+      >
+        <div class="category-top">
+          <div class="category-icon" [style.background]="c.color || fallbackColor(i)">
+            <ion-icon [name]="c.icon || 'pricetag'" style="color: #ffffff"></ion-icon>
+          </div>
+          <span class="category-name">{{ c.name }}</span>
+          <button type="button" class="icon-button chevron-button" (click)="openEditCategory(c)">
+            <ion-icon name="chevron-forward-outline"></ion-icon>
+          </button>
+        </div>
+
+        <div class="category-body">
+          <app-circular-budget-progress
+            [gaugePercentage]="c.gaugePercentage"
+            [percentage]="c.percentage"
+            [state]="c.gaugeState"
+            [accentColor]="c.color || fallbackColor(i)"
+          ></app-circular-budget-progress>
+          <div class="category-amounts">
+            <span class="spent">{{ c.spent | currencyFr }}</span>
+            <span class="budget">/ {{ c.budget | currencyFr }}</span>
+          </div>
+        </div>
+
+        <div class="status-pill" [class.status-danger]="c.overspend > 0 || c.gaugeState === 'reached'">
+          <ion-icon [name]="c.overspend > 0 || c.gaugeState === 'reached' ? 'alert-circle' : 'leaf-outline'"></ion-icon>
+          <span *ngIf="c.overspend === 0 && c.gaugeState !== 'reached'">Il vous reste {{ c.remaining | currencyFr }}</span>
+          <span *ngIf="c.overspend > 0">Dépassé de {{ c.overspend | currencyFr }}</span>
+          <span *ngIf="c.overspend === 0 && c.gaugeState === 'reached'">Budget atteint</span>
+        </div>
+      </div>
+
+      <button type="button" class="category-card add-category-card" (click)="openAddCategory()">
+        <div class="add-icon">
+          <ion-icon name="add"></ion-icon>
+        </div>
+        <span class="add-title">Ajouter une catégorie</span>
+        <span class="add-subtitle">Personnalisez votre budget selon vos besoins</span>
+      </button>
+    </div>
+
+    <ng-template #emptyState>
+      <app-empty-state
+        title="Bienvenue !"
+        message="Commencez par créer votre première catégorie."
+      >
+        <ion-button (click)="openAddCategory()">Ajouter une catégorie</ion-button>
+      </app-empty-state>
+    </ng-template>
+  </ng-container>
+</ion-content>

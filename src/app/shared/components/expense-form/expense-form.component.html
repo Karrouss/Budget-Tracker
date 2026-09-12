@@ -1,0 +1,48 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Ajouter une dépense</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="cancel()">Fermer</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="expense-form-content">
+  <ng-container *ngIf="!loading">
+    <ng-container *ngIf="categories.length > 0; else noCategories">
+      <ion-item lines="full">
+        <ion-label position="stacked">Catégorie</ion-label>
+        <ion-select [(ngModel)]="monthlyCategoryId" interface="action-sheet" placeholder="Choisir une catégorie">
+          <ion-select-option *ngFor="let c of categories" [value]="c.id">
+            {{ c.name }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <ion-item lines="full">
+        <ion-label position="stacked">Montant (€)</ion-label>
+        <ion-input type="number" [(ngModel)]="amount" placeholder="Ex : 25"></ion-input>
+      </ion-item>
+
+      <ion-item lines="full">
+        <ion-label position="stacked">Note</ion-label>
+        <ion-input [(ngModel)]="note" placeholder="Ex : Plein d'essence"></ion-input>
+      </ion-item>
+
+      <p class="form-error" *ngIf="error">{{ error }}</p>
+
+      <ion-button expand="block" class="save-button" [disabled]="saving" (click)="save()">
+        Ajouter la dépense
+      </ion-button>
+    </ng-container>
+
+    <ng-template #noCategories>
+      <app-empty-state
+        title="Aucune catégorie"
+        message="Créez d'abord une catégorie pour pouvoir y ajouter une dépense."
+      >
+        <ion-button (click)="createCategoryInstead()">Créer une catégorie</ion-button>
+      </app-empty-state>
+    </ng-template>
+  </ng-container>
+</ion-content>

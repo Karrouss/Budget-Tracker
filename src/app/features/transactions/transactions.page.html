@@ -1,0 +1,52 @@
+<ion-content [fullscreen]="true" class="transactions-content">
+  <ion-refresher slot="fixed" (ionRefresh)="load(group?.monthKey); $event.target.complete()">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <div class="page-header">
+    <h1>Transactions</h1>
+  </div>
+
+  <ng-container *ngIf="!loading && group as g">
+    <div class="month-nav">
+      <button type="button" class="month-pill" (click)="openMonthPicker()">
+        <ion-icon name="calendar-outline"></ion-icon>
+        <span>{{ g.monthLabel }}</span>
+        <ion-icon name="chevron-down-outline" class="chevron"></ion-icon>
+      </button>
+      <button type="button" class="icon-button" [disabled]="!canGoToPreviousMonth" (click)="goToPreviousMonth()">
+        <ion-icon name="chevron-back-outline"></ion-icon>
+      </button>
+      <button type="button" class="icon-button" [disabled]="!canGoToNextMonth" (click)="goToNextMonth()">
+        <ion-icon name="chevron-forward-outline"></ion-icon>
+      </button>
+    </div>
+
+    <div class="month-total-row" *ngIf="g.transactions.length > 0">
+      <span>Total du mois</span>
+      <span class="month-total">{{ g.total | currencyFr }}</span>
+    </div>
+
+    <div class="transaction-list" *ngIf="g.transactions.length > 0; else emptyState">
+      <div class="transaction-row" *ngFor="let t of g.transactions">
+        <div class="transaction-icon" [style.background]="t.categoryColor || '#5e35b1'">
+          <ion-icon [name]="t.categoryIcon || 'pricetag'" style="color: #ffffff"></ion-icon>
+        </div>
+        <div class="transaction-info">
+          <span class="transaction-note">{{ t.note }}</span>
+          <span class="transaction-meta">{{ t.categoryName }} · {{ formatDate(t.date) }}</span>
+        </div>
+        <span class="transaction-amount" [class.negative]="t.amount < 0">
+          {{ t.amount | currencyFr }}
+        </span>
+      </div>
+    </div>
+
+    <ng-template #emptyState>
+      <app-empty-state
+        title="Aucune dépense"
+        message="Aucune dépense enregistrée pour ce mois."
+      ></app-empty-state>
+    </ng-template>
+  </ng-container>
+</ion-content>

@@ -1,0 +1,25 @@
+<ion-tabs>
+  <ion-tab-bar slot="bottom">
+    <ion-tab-button tab="dashboard">
+      <ion-icon name="home"></ion-icon>
+      <ion-label>Accueil</ion-label>
+    </ion-tab-button>
+    <ion-tab-button tab="transactions">
+      <ion-icon name="list"></ion-icon>
+      <ion-label>Transactions</ion-label>
+    </ion-tab-button>
+    <ion-tab-button class="fab-spacer" disabled></ion-tab-button>
+    <ion-tab-button tab="stats">
+      <ion-icon name="bar-chart"></ion-icon>
+      <ion-label>Statistiques</ion-label>
+    </ion-tab-button>
+    <ion-tab-button tab="more">
+      <ion-icon name="ellipsis-horizontal"></ion-icon>
+      <ion-label>Plus</ion-label>
+    </ion-tab-button>
+  </ion-tab-bar>
+</ion-tabs>
+
+<button type="button" class="center-fab" (click)="openAddExpense()">
+  <ion-icon name="add"></ion-icon>
+</button>

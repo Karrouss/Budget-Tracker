@@ -1,0 +1,66 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>{{ isEditing ? 'Modifier la catégorie' : 'Nouvelle catégorie' }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="cancel()">Fermer</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="category-form-content">
+  <ion-item lines="full">
+    <ion-label position="stacked">Nom</ion-label>
+    <ion-input [(ngModel)]="name" placeholder="Ex : Courses" autofocus></ion-input>
+  </ion-item>
+
+  <ion-item lines="full">
+    <ion-label position="stacked">Budget mensuel (€)</ion-label>
+    <ion-input type="number" min="0" [(ngModel)]="budget" placeholder="0"></ion-input>
+  </ion-item>
+
+  <div class="picker-wrapper">
+    <app-icon-color-picker
+      [selectedIcon]="icon"
+      [selectedColor]="color"
+      (iconChange)="icon = $event"
+      (colorChange)="color = $event"
+    ></app-icon-color-picker>
+  </div>
+
+  <p class="form-error" *ngIf="error">{{ error }}</p>
+
+  <ion-button expand="block" class="save-button" [disabled]="saving" (click)="save()">
+    {{ isEditing ? 'Enregistrer' : 'Ajouter la catégorie' }}
+  </ion-button>
+
+  <ng-container *ngIf="isEditing">
+    <div class="section-divider"></div>
+
+    <h3 class="section-title">Ajouter / corriger une dépense</h3>
+    <p class="section-hint">
+      Montant positif pour une nouvelle dépense, négatif pour corriger une erreur.
+    </p>
+
+    <ion-item lines="full">
+      <ion-label position="stacked">Montant (€)</ion-label>
+      <ion-input type="number" [(ngModel)]="expenseAmount" placeholder="Ex : 15 ou -15"></ion-input>
+    </ion-item>
+
+    <ion-item lines="full">
+      <ion-label position="stacked">Note</ion-label>
+      <ion-input [(ngModel)]="expenseNote" placeholder="Ex : Correction erreur de saisie"></ion-input>
+    </ion-item>
+
+    <p class="form-error" *ngIf="expenseError">{{ expenseError }}</p>
+
+    <ion-button expand="block" fill="outline" [disabled]="expenseSaving" (click)="addExpense()">
+      Enregistrer la dépense
+    </ion-button>
+
+    <div class="section-divider"></div>
+
+    <ion-button expand="block" fill="clear" color="danger" (click)="deleteCategory()">
+      Supprimer la catégorie
+    </ion-button>
+  </ng-container>
+</ion-content>

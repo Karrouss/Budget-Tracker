@@ -1,0 +1,64 @@
+<ion-content [fullscreen]="true" class="stats-content">
+  <ion-refresher slot="fixed" (ionRefresh)="load(summary?.monthKey); $event.target.complete()">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+
+  <div class="page-header">
+    <h1>Statistiques</h1>
+  </div>
+
+  <ng-container *ngIf="!loading && summary as s">
+    <div class="month-nav">
+      <button type="button" class="month-pill" (click)="openMonthPicker()">
+        <ion-icon name="calendar-outline"></ion-icon>
+        <span>{{ s.monthLabel }}</span>
+        <ion-icon name="chevron-down-outline" class="chevron"></ion-icon>
+      </button>
+      <button type="button" class="icon-button" [disabled]="!canGoToPreviousMonth" (click)="goToPreviousMonth()">
+        <ion-icon name="chevron-back-outline"></ion-icon>
+      </button>
+      <button type="button" class="icon-button" [disabled]="!canGoToNextMonth" (click)="goToNextMonth()">
+        <ion-icon name="chevron-forward-outline"></ion-icon>
+      </button>
+    </div>
+
+    <ng-container *ngIf="slices.length > 0; else emptyState">
+      <div class="donut-wrapper">
+        <svg viewBox="0 0 180 180" class="donut">
+          <circle class="donut-track" cx="90" cy="90" r="70" />
+          <circle
+            *ngFor="let slice of slices"
+            class="donut-slice"
+            cx="90"
+            cy="90"
+            r="70"
+            [attr.stroke]="slice.color"
+            [attr.stroke-dasharray]="slice.dashArray"
+            [attr.stroke-dashoffset]="slice.dashOffset"
+          />
+        </svg>
+        <div class="donut-center">
+          <span class="donut-total">{{ s.totalSpent | currencyFr }}</span>
+          <span class="donut-label">dépensé</span>
+        </div>
+      </div>
+
+      <div class="legend">
+        <div class="legend-row" *ngFor="let slice of slices">
+          <span class="legend-dot" [style.background]="slice.color"></span>
+          <ion-icon [name]="slice.icon || 'pricetag'" style="color: #5c5470"></ion-icon>
+          <span class="legend-name">{{ slice.name }}</span>
+          <span class="legend-share">{{ slice.share | number: '1.0-0' }}%</span>
+          <span class="legend-amount">{{ slice.spent | currencyFr }}</span>
+        </div>
+      </div>
+    </ng-container>
+
+    <ng-template #emptyState>
+      <app-empty-state
+        title="Aucune dépense"
+        message="Ajoutez des dépenses ce mois-ci pour voir leur répartition par catégorie."
+      ></app-empty-state>
+    </ng-template>
+  </ng-container>
+</ion-content>
