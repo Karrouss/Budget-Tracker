@@ -6,8 +6,11 @@ Application mobile de suivi de budget personnel, construite avec **Ionic + Angul
 
 - **Dashboard mensuel** — vue d'ensemble du budget total, du montant dépensé et du reste à dépenser, avec un indicateur visuel selon que vous êtes dans les clous ou en dépassement.
 - **Catégories personnalisables** — créez, modifiez (nom, icône, couleur, budget) ou supprimez vos propres catégories, chacune avec une jauge de progression circulaire.
-- **Suivi des dépenses** — ajoutez une dépense en choisissant sa catégorie ; les montants peuvent être négatifs pour corriger une erreur de saisie.
-- **Historique par mois** — l'onglet Transactions liste les dépenses du mois sélectionné, synchronisé avec le dashboard.
+- **Suivi des dépenses** — ajoutez une dépense en choisissant sa catégorie, sa date (dans le mois en cours) et son moyen de paiement (Cash ou CB) ; le total payé en cash est affiché chaque mois.
+- **Historique par mois** — l'onglet Transactions liste les dépenses du mois sélectionné, synchronisé avec le dashboard. Recherche par texte et filtres par catégorie et moyen de paiement.
+- **Modification / suppression** — les dépenses du mois en cours se modifient ou se suppriment d'un clic dans l'onglet Transactions. Une catégorie ne peut être supprimée qu'une fois vidée de ses dépenses.
+- **Rappels et alertes** — rappel quotidien optionnel (notification locale, application mobile uniquement) et alerte lorsqu'une catégorie atteint 80 % puis dépasse son budget.
+- **Sauvegarde** — export de toutes les données dans un fichier JSON et import pour les restaurer (après une réinstallation ou sur un autre téléphone).
 - **Statistiques** — répartition des dépenses par catégorie sous forme de donut chart.
 - **Reconduction automatique des mois** — chaque nouveau mois reprend les catégories/budgets du mois précédent, remet les dépenses à zéro, et respecte les catégories supprimées (elles restent visibles dans l'historique passé).
 - **Thème clair / sombre** — bascule manuelle, mémorisée entre les sessions.
