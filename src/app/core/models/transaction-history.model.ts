@@ -2,6 +2,7 @@ import { PaymentMethod } from './expense.model';
 
 export interface TransactionViewModel {
   id: string;
+  monthlyCategoryId: string;
   date: string;
   amount: number;
   note: string | null;
@@ -16,5 +17,7 @@ export interface MonthTransactionsGroup {
   monthLabel: string;
   total: number;
   totalCash: number;
+  /** Only the current month's expenses can be edited. */
+  isCurrentMonth: boolean;
   transactions: TransactionViewModel[];
 }

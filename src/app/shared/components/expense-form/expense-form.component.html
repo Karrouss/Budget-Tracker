@@ -1,6 +1,6 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Ajouter une dépense</ion-title>
+    <ion-title>{{ isEdit ? 'Modifier la dépense' : 'Ajouter une dépense' }}</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="cancel()">Fermer</ion-button>
     </ion-buttons>
@@ -46,7 +46,7 @@
       <p class="form-error" *ngIf="error">{{ error }}</p>
 
       <ion-button expand="block" class="save-button" [disabled]="saving" (click)="save()">
-        Ajouter la dépense
+        {{ isEdit ? 'Enregistrer les modifications' : 'Ajouter la dépense' }}
       </ion-button>
     </ng-container>
 

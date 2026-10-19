@@ -1,11 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ActionSheetController } from '@ionic/angular';
+import { ActionSheetController, ModalController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { TransactionHistoryService } from '../../core/services/transaction-history.service';
 import { MonthService } from '../../core/services/month.service';
 import { DashboardRefreshService } from '../../core/services/dashboard-refresh.service';
 import { SelectedMonthService } from '../../core/services/selected-month.service';
-import { MonthTransactionsGroup, PAYMENT_METHOD_LABELS } from '../../core/models';
+import { MonthTransactionsGroup, PAYMENT_METHOD_LABELS, TransactionViewModel } from '../../core/models';
+import { ExpenseFormComponent } from '../../shared/components/expense-form/expense-form.component';
 
 @Component({
   selector: 'app-transactions',
@@ -28,6 +29,7 @@ export class TransactionsPage implements OnInit, OnDestroy {
     private readonly dashboardRefresh: DashboardRefreshService,
     private readonly selectedMonth: SelectedMonthService,
     private readonly actionSheetCtrl: ActionSheetController,
+    private readonly modalCtrl: ModalController,
   ) {}
 
   async ngOnInit(): Promise<void> {
@@ -93,6 +95,15 @@ export class TransactionsPage implements OnInit, OnDestroy {
       ],
     });
     await actionSheet.present();
+  }
+
+  /** The form notifies DashboardRefreshService on save, which reloads every tab. */
+  async openEdit(transaction: TransactionViewModel): Promise<void> {
+    const modal = await this.modalCtrl.create({
+      component: ExpenseFormComponent,
+      componentProps: { expense: transaction },
+    });
+    await modal.present();
   }
 
   formatDate(iso: string): string {

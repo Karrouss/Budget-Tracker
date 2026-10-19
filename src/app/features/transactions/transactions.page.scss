@@ -93,6 +93,16 @@
   background: #ffffff;
   box-shadow: 0 2px 8px rgba(20, 16, 25, 0.06);
   margin-bottom: 8px;
+
+  &.editable {
+    cursor: pointer;
+  }
+}
+
+.edit-hint {
+  font-size: 16px;
+  color: #5c5470;
+  flex-shrink: 0;
 }
 
 .transaction-icon {

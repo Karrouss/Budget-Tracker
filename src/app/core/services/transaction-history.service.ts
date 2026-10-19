@@ -3,7 +3,7 @@ import { MonthService } from './month.service';
 import { MonthlyCategoryService } from './monthly-category.service';
 import { ExpenseService } from './expense.service';
 import { Month, MonthTransactionsGroup, TransactionViewModel } from '../models';
-import { formatMonthLabel } from '../utils/month-key.util';
+import { currentMonthKey, formatMonthLabel } from '../utils/month-key.util';
 import { sum } from '../utils/budget-calculations';
 
 /** Builds the "history of my spending, for this month" view for the Transactions tab. */
@@ -34,6 +34,7 @@ export class TransactionHistoryService {
         const mc = categoryById.get(e.monthlyCategoryId);
         return {
           id: e.id,
+          monthlyCategoryId: e.monthlyCategoryId,
           date: e.date,
           amount: e.amount,
           note: e.note,
@@ -50,6 +51,7 @@ export class TransactionHistoryService {
       monthLabel: formatMonthLabel(month.monthKey),
       total: sum(transactions.map((t) => t.amount)),
       totalCash: sum(transactions.filter((t) => t.paymentMethod === 'cash').map((t) => t.amount)),
+      isCurrentMonth: month.monthKey === currentMonthKey(),
       transactions,
     };
   }

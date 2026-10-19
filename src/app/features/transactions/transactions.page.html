@@ -32,7 +32,12 @@
     </div>
 
     <div class="transaction-list" *ngIf="g.transactions.length > 0; else emptyState">
-      <div class="transaction-row" *ngFor="let t of g.transactions">
+      <div
+        class="transaction-row"
+        *ngFor="let t of g.transactions"
+        [class.editable]="g.isCurrentMonth"
+        (click)="g.isCurrentMonth && openEdit(t)"
+      >
         <div class="transaction-icon" [style.background]="t.categoryColor || '#5e35b1'">
           <ion-icon [name]="t.categoryIcon || 'pricetag'" style="color: #ffffff"></ion-icon>
         </div>
@@ -43,6 +48,7 @@
         <span class="transaction-amount" [class.negative]="t.amount < 0">
           {{ t.amount | currencyFr }}
         </span>
+        <ion-icon *ngIf="g.isCurrentMonth" name="create-outline" class="edit-hint"></ion-icon>
       </div>
     </div>
 
