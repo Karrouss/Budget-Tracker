@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { AlertController, ModalController } from '@ionic/angular';
+import { Router } from '@angular/router';
 import { CategoryCardViewModel, PAYMENT_METHOD_LABELS, PaymentMethod } from '../../../core/models';
 import { CategoryService } from '../../../core/services/category.service';
 import { MonthlyCategoryService } from '../../../core/services/monthly-category.service';
@@ -38,6 +39,7 @@ export class CategoryFormComponent implements OnInit {
   constructor(
     private readonly modalCtrl: ModalController,
     private readonly alertCtrl: AlertController,
+    private readonly router: Router,
     private readonly categoryService: CategoryService,
     private readonly monthlyCategoryService: MonthlyCategoryService,
     private readonly expenseService: ExpenseService,
@@ -132,6 +134,13 @@ export class CategoryFormComponent implements OnInit {
   async deleteCategory(): Promise<void> {
     if (!this.category) return;
 
+    // A category can only be deleted once its expenses have been moved to another category.
+    const linkedExpenses = await this.expenseService.listForMonthlyCategories([this.category.monthlyCategoryId]);
+    if (linkedExpenses.length > 0) {
+      await this.showDeleteBlocked(linkedExpenses.length);
+      return;
+    }
+
     const alert = await this.alertCtrl.create({
       header: 'Supprimer cette catégorie ?',
       message:
@@ -146,6 +155,30 @@ export class CategoryFormComponent implements OnInit {
       ],
     });
     await alert.present();
+  }
+
+  private async showDeleteBlocked(expenseCount: number): Promise<void> {
+    const plural = expenseCount > 1;
+    const alert = await this.alertCtrl.create({
+      header: 'Suppression impossible',
+      message:
+        `Cette catégorie contient ${expenseCount} dépense${plural ? 's' : ''}. ` +
+        `Modifiez la catégorie de ${plural ? 'ces dépenses' : 'cette dépense'} depuis l'onglet Transactions, ` +
+        'puis supprimez la catégorie.',
+      buttons: [
+        { text: 'Fermer', role: 'cancel' },
+        {
+          text: 'Voir les transactions',
+          handler: () => this.goToTransactions(),
+        },
+      ],
+    });
+    await alert.present();
+  }
+
+  private async goToTransactions(): Promise<void> {
+    await this.modalCtrl.dismiss(null);
+    await this.router.navigateByUrl('/transactions');
   }
 
   private async confirmDelete(): Promise<void> {
