@@ -7,6 +7,9 @@ import { MonthlyCategoryService } from '../../../core/services/monthly-category.
 import { ExpenseService } from '../../../core/services/expense.service';
 import { DashboardRefreshService } from '../../../core/services/dashboard-refresh.service';
 import { DEFAULT_CATEGORY_COLOR, DEFAULT_CATEGORY_ICON } from '../../../core/utils/category-presets';
+import { MonthService } from '../../../core/services/month.service';
+import { MonthlyCategoryRepository } from '../../../core/repositories/monthly-category.repository';
+import { dayStringToIso, firstDayOfCurrentMonthString, todayDayString } from '../../../core/utils/date.util';
 
 @Component({
   selector: 'app-category-form',
@@ -28,6 +31,11 @@ export class CategoryFormComponent implements OnInit {
   expenseAmount: number | null = null;
   expenseNote = '';
   expensePaymentMethod: PaymentMethod | null = null;
+  expenseDay = todayDayString();
+  readonly minDay = firstDayOfCurrentMonthString();
+  readonly maxDay = todayDayString();
+  /** Expenses can only be added to the current month's categories. */
+  isCurrentMonth = false;
   readonly paymentMethodLabels = PAYMENT_METHOD_LABELS;
   expenseError: string | null = null;
   expenseSaving = false;
@@ -44,10 +52,17 @@ export class CategoryFormComponent implements OnInit {
     private readonly monthlyCategoryService: MonthlyCategoryService,
     private readonly expenseService: ExpenseService,
     private readonly dashboardRefresh: DashboardRefreshService,
+    private readonly monthService: MonthService,
+    private readonly monthlyCategoryRepo: MonthlyCategoryRepository,
   ) {}
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     if (this.category) {
+      const [currentMonth, monthlyCategory] = await Promise.all([
+        this.monthService.getCurrentMonth(),
+        this.monthlyCategoryRepo.findById(this.category.monthlyCategoryId),
+      ]);
+      this.isCurrentMonth = monthlyCategory?.monthId === currentMonth.id;
       this.name = this.category.name;
       this.budget = this.category.budget;
       this.icon = this.category.icon ?? DEFAULT_CATEGORY_ICON;
@@ -97,12 +112,16 @@ export class CategoryFormComponent implements OnInit {
     }
   }
 
-  /** Logs a spend adjustment for this month. Amount can be negative to correct a past entry. */
+  /** Logs an expense in this category for the current month. */
   async addExpense(): Promise<void> {
     if (!this.category) return;
 
-    if (this.expenseAmount === null || this.expenseAmount === 0) {
-      this.expenseError = 'Indiquez un montant différent de zéro (négatif pour corriger une erreur).';
+    if (this.expenseAmount === null || !(this.expenseAmount > 0)) {
+      this.expenseError = 'Indiquez un montant supérieur à zéro.';
+      return;
+    }
+    if (!this.expenseDay || this.expenseDay < this.minDay || this.expenseDay > this.maxDay) {
+      this.expenseError = 'Choisissez une date comprise dans le mois en cours, au plus tard aujourd’hui.';
       return;
     }
     if (!this.expensePaymentMethod) {
@@ -110,7 +129,7 @@ export class CategoryFormComponent implements OnInit {
       return;
     }
     if (!this.expenseNote.trim()) {
-      this.expenseError = 'Une note est obligatoire (ex : raison de la correction).';
+      this.expenseError = 'Une note est obligatoire (ex : ce que vous avez acheté).';
       return;
     }
 
@@ -120,7 +139,7 @@ export class CategoryFormComponent implements OnInit {
       await this.expenseService.create({
         monthlyCategoryId: this.category.monthlyCategoryId,
         amount: this.expenseAmount,
-        date: new Date().toISOString(),
+        date: dayStringToIso(this.expenseDay),
         note: this.expenseNote.trim(),
         paymentMethod: this.expensePaymentMethod,
       });

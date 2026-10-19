@@ -47,3 +47,18 @@
 .payment-segment {
   margin: 8px 0 12px;
 }
+
+.field {
+  padding: 10px 0 4px 16px;
+  border-bottom: 1px solid var(--ion-color-step-150, #e6e1ec);
+
+  .field-label {
+    display: block;
+    font-size: 12px;
+    color: var(--ion-color-step-600, #5c5470);
+  }
+
+  .payment-segment {
+    margin: 6px 0 8px;
+  }
+}

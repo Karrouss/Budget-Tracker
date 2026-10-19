@@ -34,42 +34,49 @@
   </ion-button>
 
   <ng-container *ngIf="isEditing">
-    <div class="section-divider"></div>
+    <ng-container *ngIf="isCurrentMonth">
+      <div class="section-divider"></div>
 
-    <h3 class="section-title">Ajouter / corriger une dépense</h3>
-    <p class="section-hint">
-      Montant positif pour une nouvelle dépense, négatif pour corriger une erreur.
-    </p>
+      <h3 class="section-title">Ajouter une dépense</h3>
+      <p class="section-hint">
+        Pour corriger une dépense existante, modifiez-la ou supprimez-la depuis l'onglet Transactions.
+      </p>
 
-    <ion-item lines="full">
-      <ion-label position="stacked">Montant (€)</ion-label>
-      <ion-input type="number" [(ngModel)]="expenseAmount" placeholder="Ex : 15 ou -15"></ion-input>
-    </ion-item>
+      <ion-item lines="full">
+        <ion-label position="stacked">Montant (€)</ion-label>
+        <ion-input type="number" inputmode="decimal" min="0" [(ngModel)]="expenseAmount" placeholder="Ex : 15"></ion-input>
+      </ion-item>
 
-    <ion-item lines="full">
-      <ion-label position="stacked">Moyen de paiement</ion-label>
-      <ion-segment [(ngModel)]="expensePaymentMethod" class="payment-segment">
-        <ion-segment-button value="cash">
-          <ion-icon name="cash-outline"></ion-icon>
-          <ion-label>{{ paymentMethodLabels.cash }}</ion-label>
-        </ion-segment-button>
-        <ion-segment-button value="card">
-          <ion-icon name="card-outline"></ion-icon>
-          <ion-label>{{ paymentMethodLabels.card }}</ion-label>
-        </ion-segment-button>
-      </ion-segment>
-    </ion-item>
+      <ion-item lines="full">
+        <ion-label position="stacked">Date</ion-label>
+        <ion-input type="date" [(ngModel)]="expenseDay" [min]="minDay" [max]="maxDay"></ion-input>
+      </ion-item>
 
-    <ion-item lines="full">
-      <ion-label position="stacked">Note</ion-label>
-      <ion-input [(ngModel)]="expenseNote" placeholder="Ex : Correction erreur de saisie"></ion-input>
-    </ion-item>
+      <div class="field">
+        <span class="field-label">Moyen de paiement</span>
+        <ion-segment [(ngModel)]="expensePaymentMethod" class="payment-segment">
+          <ion-segment-button value="cash">
+            <ion-icon name="cash-outline"></ion-icon>
+            <ion-label>{{ paymentMethodLabels.cash }}</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="card">
+            <ion-icon name="card-outline"></ion-icon>
+            <ion-label>{{ paymentMethodLabels.card }}</ion-label>
+          </ion-segment-button>
+        </ion-segment>
+      </div>
 
-    <p class="form-error" *ngIf="expenseError">{{ expenseError }}</p>
+      <ion-item lines="full">
+        <ion-label position="stacked">Note</ion-label>
+        <ion-input [(ngModel)]="expenseNote" placeholder="Ex : Courses du samedi"></ion-input>
+      </ion-item>
 
-    <ion-button expand="block" fill="outline" [disabled]="expenseSaving" (click)="addExpense()">
-      Enregistrer la dépense
-    </ion-button>
+      <p class="form-error" *ngIf="expenseError">{{ expenseError }}</p>
+
+      <ion-button expand="block" fill="outline" [disabled]="expenseSaving" (click)="addExpense()">
+        Enregistrer la dépense
+      </ion-button>
+    </ng-container>
 
     <div class="section-divider"></div>
 

@@ -1,11 +1,12 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { AlertController, ModalController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { MonthlyCategory, PAYMENT_METHOD_LABELS, PaymentMethod, TransactionViewModel } from '../../../core/models';
 import { MonthService } from '../../../core/services/month.service';
 import { MonthlyCategoryService } from '../../../core/services/monthly-category.service';
 import { ExpenseService } from '../../../core/services/expense.service';
 import { DashboardRefreshService } from '../../../core/services/dashboard-refresh.service';
+import { dayStringToIso, firstDayOfCurrentMonthString, toDayString, todayDayString } from '../../../core/utils/date.util';
 import { CategoryFormComponent } from '../category-form/category-form.component';
 
 @Component({
@@ -23,6 +24,10 @@ export class ExpenseFormComponent implements OnInit {
   amount: number | null = null;
   note = '';
   paymentMethod: PaymentMethod | null = null;
+  /** YYYY-MM-DD, limited to the current month up to today. */
+  day = todayDayString();
+  readonly minDay = firstDayOfCurrentMonthString();
+  readonly maxDay = todayDayString();
   readonly paymentMethodLabels = PAYMENT_METHOD_LABELS;
   loading = true;
   saving = false;
@@ -30,6 +35,7 @@ export class ExpenseFormComponent implements OnInit {
 
   constructor(
     private readonly modalCtrl: ModalController,
+    private readonly alertCtrl: AlertController,
     private readonly router: Router,
     private readonly monthService: MonthService,
     private readonly monthlyCategoryService: MonthlyCategoryService,
@@ -57,6 +63,7 @@ export class ExpenseFormComponent implements OnInit {
       this.amount = expense.amount;
       this.note = expense.note ?? '';
       this.paymentMethod = expense.paymentMethod;
+      this.day = toDayString(new Date(expense.date));
     } else {
       this.monthlyCategoryId = this.categories[0]?.id ?? null;
     }
@@ -68,8 +75,12 @@ export class ExpenseFormComponent implements OnInit {
       this.error = 'Choisissez une catégorie.';
       return;
     }
-    if (this.amount === null || this.amount === 0) {
-      this.error = 'Indiquez un montant différent de zéro.';
+    if (this.amount === null || !(this.amount > 0)) {
+      this.error = 'Indiquez un montant supérieur à zéro.';
+      return;
+    }
+    if (!this.day || this.day < this.minDay || this.day > this.maxDay) {
+      this.error = 'Choisissez une date comprise dans le mois en cours, au plus tard aujourd’hui.';
       return;
     }
     if (!this.paymentMethod) {
@@ -85,27 +96,61 @@ export class ExpenseFormComponent implements OnInit {
     this.saving = true;
     try {
       if (this.expense) {
+        const dayChanged = this.day !== toDayString(new Date(this.expense.date));
         await this.expenseService.update(this.expense.id, {
           monthlyCategoryId: this.monthlyCategoryId,
           amount: this.amount,
           note: this.note.trim(),
           paymentMethod: this.paymentMethod,
+          // Keep the original timestamp unless the day itself was changed.
+          ...(dayChanged ? { date: dayStringToIso(this.day) } : {}),
         });
-        this.dashboardRefresh.notify();
-        await this.modalCtrl.dismiss({ saved: true });
-        return;
+      } else {
+        await this.expenseService.create({
+          monthlyCategoryId: this.monthlyCategoryId,
+          amount: this.amount,
+          date: dayStringToIso(this.day),
+          note: this.note.trim(),
+          paymentMethod: this.paymentMethod,
+        });
       }
 
-      await this.expenseService.create({
-        monthlyCategoryId: this.monthlyCategoryId,
-        amount: this.amount,
-        date: new Date().toISOString(),
-        note: this.note.trim(),
-        paymentMethod: this.paymentMethod,
-      });
       this.dashboardRefresh.notify();
       await this.modalCtrl.dismiss({ saved: true });
-      await this.router.navigateByUrl('/dashboard');
+      if (!this.expense) {
+        await this.router.navigateByUrl('/dashboard');
+      }
+    } finally {
+      this.saving = false;
+    }
+  }
+
+  async confirmDelete(): Promise<void> {
+    if (!this.expense) return;
+    const expense = this.expense;
+    const alert = await this.alertCtrl.create({
+      header: 'Supprimer cette dépense ?',
+      message: 'Cette action est définitive.',
+      buttons: [
+        { text: 'Annuler', role: 'cancel' },
+        {
+          text: 'Supprimer',
+          role: 'destructive',
+          handler: () => {
+            void this.delete(expense.id);
+          },
+        },
+      ],
+    });
+    await alert.present();
+  }
+
+  private async delete(id: string): Promise<void> {
+    this.saving = true;
+    try {
+      await this.expenseService.delete(id);
+      this.dashboardRefresh.notify();
+      await this.modalCtrl.dismiss({ deleted: true });
     } finally {
       this.saving = false;
     }

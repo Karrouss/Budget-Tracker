@@ -21,11 +21,16 @@
 
       <ion-item lines="full">
         <ion-label position="stacked">Montant (€)</ion-label>
-        <ion-input type="number" [(ngModel)]="amount" placeholder="Ex : 25"></ion-input>
+        <ion-input type="number" inputmode="decimal" min="0" [(ngModel)]="amount" placeholder="Ex : 25"></ion-input>
       </ion-item>
 
       <ion-item lines="full">
-        <ion-label position="stacked">Moyen de paiement</ion-label>
+        <ion-label position="stacked">Date</ion-label>
+        <ion-input type="date" [(ngModel)]="day" [min]="minDay" [max]="maxDay"></ion-input>
+      </ion-item>
+
+      <div class="field">
+        <span class="field-label">Moyen de paiement</span>
         <ion-segment [(ngModel)]="paymentMethod" class="payment-segment">
           <ion-segment-button value="cash">
             <ion-icon name="cash-outline"></ion-icon>
@@ -36,7 +41,7 @@
             <ion-label>{{ paymentMethodLabels.card }}</ion-label>
           </ion-segment-button>
         </ion-segment>
-      </ion-item>
+      </div>
 
       <ion-item lines="full">
         <ion-label position="stacked">Note</ion-label>
@@ -47,6 +52,11 @@
 
       <ion-button expand="block" class="save-button" [disabled]="saving" (click)="save()">
         {{ isEdit ? 'Enregistrer les modifications' : 'Ajouter la dépense' }}
+      </ion-button>
+
+      <ion-button *ngIf="isEdit" expand="block" fill="clear" color="danger" [disabled]="saving" (click)="confirmDelete()">
+        <ion-icon slot="start" name="trash-outline"></ion-icon>
+        Supprimer la dépense
       </ion-button>
     </ng-container>
 
