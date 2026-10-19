@@ -46,7 +46,7 @@
       <div class="legend">
         <div class="legend-row" *ngFor="let slice of slices">
           <span class="legend-dot" [style.background]="slice.color"></span>
-          <ion-icon [name]="slice.icon || 'pricetag'" style="color: #5c5470"></ion-icon>
+          <ion-icon [name]="slice.icon || 'pricetag'" class="legend-icon"></ion-icon>
           <span class="legend-name">{{ slice.name }}</span>
           <span class="legend-share">{{ slice.share | number: '1.0-0' }}%</span>
           <span class="legend-amount">{{ slice.spent | currencyFr }}</span>

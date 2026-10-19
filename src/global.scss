@@ -40,10 +40,34 @@
 @import "@ionic/angular/css/palettes/dark.class.css";
 /* @import "@ionic/angular/css/palettes/dark.system.css"; */
 
+/* App colour tokens: every page uses these instead of hard-coded colours so
+   that the dark theme applies everywhere. */
 :root {
   --app-background: #f7f2fb;
+  --app-surface: #ffffff;
+  --app-text: #141019;
+  --app-text-muted: #5c5470;
+  --app-card-shadow: rgba(20, 16, 25, 0.06);
+  --app-pill-background: rgba(255, 255, 255, 0.7);
+  --app-track: #ece5f7;
+  --app-summary-start: #efe9ff;
+  --app-summary-end: #e3e0fb;
+  --app-state-ok: #1e8e5a;
+  --app-state-warning: #c07a12;
+  --app-state-danger: #d64545;
 }
 
 html.ion-palette-dark {
   --app-background: #15121c;
+  --app-surface: #221d2c;
+  --app-text: #ece8f4;
+  --app-text-muted: #a59cb8;
+  --app-card-shadow: rgba(0, 0, 0, 0.35);
+  --app-pill-background: rgba(255, 255, 255, 0.08);
+  --app-track: #312a3e;
+  --app-summary-start: #2b2342;
+  --app-summary-end: #221d34;
+  --app-state-ok: #4cc38a;
+  --app-state-warning: #f0a43a;
+  --app-state-danger: #ff6b6b;
 }

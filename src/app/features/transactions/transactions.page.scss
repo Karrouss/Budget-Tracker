@@ -145,8 +145,8 @@
   gap: 12px;
   padding: 12px;
   border-radius: 16px;
-  background: #ffffff;
-  box-shadow: 0 2px 8px rgba(20, 16, 25, 0.06);
+  background: var(--app-surface);
+  box-shadow: 0 2px 8px var(--app-card-shadow);
   margin-bottom: 8px;
 
   &.editable {
@@ -156,7 +156,7 @@
 
 .edit-hint {
   font-size: 16px;
-  color: #5c5470;
+  color: var(--app-text-muted);
   flex-shrink: 0;
 }
 
@@ -180,7 +180,7 @@
   .transaction-note {
     font-weight: 700;
     font-size: 14px;
-    color: #141019;
+    color: var(--app-text);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -188,14 +188,14 @@
 
   .transaction-meta {
     font-size: 12px;
-    color: #5c5470;
+    color: var(--app-text-muted);
   }
 }
 
 .transaction-amount {
   font-weight: 800;
   font-size: 15px;
-  color: #141019;
+  color: var(--app-text);
   flex-shrink: 0;
 
   &.negative {

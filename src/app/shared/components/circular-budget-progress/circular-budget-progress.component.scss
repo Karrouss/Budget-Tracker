@@ -17,7 +17,7 @@
   }
 
   .track {
-    stroke: var(--gauge-track, #ece5f7);
+    stroke: var(--gauge-track, var(--app-track));
   }
 
   .value {

@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { ReminderService } from './core/services/reminder.service';
+import { ThemeService } from './core/services/theme.service';
 
 @Component({
   selector: 'app-root',
@@ -8,7 +9,8 @@ import { ReminderService } from './core/services/reminder.service';
   standalone: false,
 })
 export class AppComponent {
-  constructor(reminderService: ReminderService) {
+  // ThemeService is injected here so the saved theme is applied on startup.
+  constructor(reminderService: ReminderService, _themeService: ThemeService) {
     void reminderService.syncFromSettings();
   }
 }
