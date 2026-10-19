@@ -68,6 +68,7 @@ export class DashboardService {
       monthLabel: formatMonthLabel(month.monthKey),
       totalBudget,
       totalSpent,
+      totalCash: sum(expenses.filter((e) => e.paymentMethod === 'cash').map((e) => e.amount)),
       totalRemaining: remaining(totalSpent, totalBudget),
       percentage: percentageUsed(totalSpent, totalBudget),
       categories,

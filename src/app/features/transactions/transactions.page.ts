@@ -5,7 +5,7 @@ import { TransactionHistoryService } from '../../core/services/transaction-histo
 import { MonthService } from '../../core/services/month.service';
 import { DashboardRefreshService } from '../../core/services/dashboard-refresh.service';
 import { SelectedMonthService } from '../../core/services/selected-month.service';
-import { MonthTransactionsGroup } from '../../core/models';
+import { MonthTransactionsGroup, PAYMENT_METHOD_LABELS } from '../../core/models';
 
 @Component({
   selector: 'app-transactions',
@@ -16,6 +16,7 @@ import { MonthTransactionsGroup } from '../../core/models';
 export class TransactionsPage implements OnInit, OnDestroy {
   group: MonthTransactionsGroup | null = null;
   loading = true;
+  readonly paymentMethodLabels = PAYMENT_METHOD_LABELS;
 
   private monthKeys: string[] = [];
   private refreshSubscription?: Subscription;

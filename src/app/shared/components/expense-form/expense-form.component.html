@@ -25,6 +25,20 @@
       </ion-item>
 
       <ion-item lines="full">
+        <ion-label position="stacked">Moyen de paiement</ion-label>
+        <ion-segment [(ngModel)]="paymentMethod" class="payment-segment">
+          <ion-segment-button value="cash">
+            <ion-icon name="cash-outline"></ion-icon>
+            <ion-label>{{ paymentMethodLabels.cash }}</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="card">
+            <ion-icon name="card-outline"></ion-icon>
+            <ion-label>{{ paymentMethodLabels.card }}</ion-label>
+          </ion-segment-button>
+        </ion-segment>
+      </ion-item>
+
+      <ion-item lines="full">
         <ion-label position="stacked">Note</ion-label>
         <ion-input [(ngModel)]="note" placeholder="Ex : Plein d'essence"></ion-input>
       </ion-item>

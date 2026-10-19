@@ -103,6 +103,13 @@
     font-size: 13px;
     color: #5c5470;
   }
+
+  .cash-subtext {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 6px;
+  }
 }
 
 .wallet-badge {

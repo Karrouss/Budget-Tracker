@@ -37,6 +37,7 @@ export class TransactionHistoryService {
           date: e.date,
           amount: e.amount,
           note: e.note,
+          paymentMethod: e.paymentMethod ?? null,
           categoryName: mc?.name ?? 'Catégorie supprimée',
           categoryIcon: mc?.icon ?? null,
           categoryColor: mc?.color ?? null,
@@ -48,6 +49,7 @@ export class TransactionHistoryService {
       monthKey: month.monthKey,
       monthLabel: formatMonthLabel(month.monthKey),
       total: sum(transactions.map((t) => t.amount)),
+      totalCash: sum(transactions.filter((t) => t.paymentMethod === 'cash').map((t) => t.amount)),
       transactions,
     };
   }

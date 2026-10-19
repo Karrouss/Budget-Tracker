@@ -70,6 +70,16 @@
   }
 }
 
+.cash-total-row {
+  padding-top: 0;
+
+  span:first-child {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+}
+
 .transaction-list {
   padding: 8px 16px 100px;
 }

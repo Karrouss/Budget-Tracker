@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { AlertController, ModalController } from '@ionic/angular';
-import { CategoryCardViewModel } from '../../../core/models';
+import { CategoryCardViewModel, PAYMENT_METHOD_LABELS, PaymentMethod } from '../../../core/models';
 import { CategoryService } from '../../../core/services/category.service';
 import { MonthlyCategoryService } from '../../../core/services/monthly-category.service';
 import { ExpenseService } from '../../../core/services/expense.service';
@@ -26,6 +26,8 @@ export class CategoryFormComponent implements OnInit {
 
   expenseAmount: number | null = null;
   expenseNote = '';
+  expensePaymentMethod: PaymentMethod | null = null;
+  readonly paymentMethodLabels = PAYMENT_METHOD_LABELS;
   expenseError: string | null = null;
   expenseSaving = false;
 
@@ -101,6 +103,10 @@ export class CategoryFormComponent implements OnInit {
       this.expenseError = 'Indiquez un montant différent de zéro (négatif pour corriger une erreur).';
       return;
     }
+    if (!this.expensePaymentMethod) {
+      this.expenseError = 'Indiquez si la dépense a été payée en cash ou par CB.';
+      return;
+    }
     if (!this.expenseNote.trim()) {
       this.expenseError = 'Une note est obligatoire (ex : raison de la correction).';
       return;
@@ -114,6 +120,7 @@ export class CategoryFormComponent implements OnInit {
         amount: this.expenseAmount,
         date: new Date().toISOString(),
         note: this.expenseNote.trim(),
+        paymentMethod: this.expensePaymentMethod,
       });
       this.dashboardRefresh.notify();
       await this.modalCtrl.dismiss({ saved: true });

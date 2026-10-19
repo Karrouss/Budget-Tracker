@@ -20,6 +20,7 @@ export interface DashboardSummary {
   monthLabel: string;
   totalBudget: number;
   totalSpent: number;
+  totalCash: number;
   totalRemaining: number;
   percentage: number;
   categories: CategoryCardViewModel[];

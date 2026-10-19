@@ -26,6 +26,10 @@
       <span>Total du mois</span>
       <span class="month-total">{{ g.total | currencyFr }}</span>
     </div>
+    <div class="month-total-row cash-total-row" *ngIf="g.transactions.length > 0">
+      <span><ion-icon name="cash-outline"></ion-icon> Dont payé en cash</span>
+      <span class="month-total">{{ g.totalCash | currencyFr }}</span>
+    </div>
 
     <div class="transaction-list" *ngIf="g.transactions.length > 0; else emptyState">
       <div class="transaction-row" *ngFor="let t of g.transactions">
@@ -34,7 +38,7 @@
         </div>
         <div class="transaction-info">
           <span class="transaction-note">{{ t.note }}</span>
-          <span class="transaction-meta">{{ t.categoryName }} · {{ formatDate(t.date) }}</span>
+          <span class="transaction-meta">{{ t.categoryName }} · {{ formatDate(t.date) }}<ng-container *ngIf="t.paymentMethod"> · {{ paymentMethodLabels[t.paymentMethod] }}</ng-container></span>
         </div>
         <span class="transaction-amount" [class.negative]="t.amount < 0">
           {{ t.amount | currencyFr }}

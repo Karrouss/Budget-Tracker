@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { Router } from '@angular/router';
-import { MonthlyCategory } from '../../../core/models';
+import { MonthlyCategory, PAYMENT_METHOD_LABELS, PaymentMethod } from '../../../core/models';
 import { MonthService } from '../../../core/services/month.service';
 import { MonthlyCategoryService } from '../../../core/services/monthly-category.service';
 import { ExpenseService } from '../../../core/services/expense.service';
@@ -19,6 +19,8 @@ export class ExpenseFormComponent implements OnInit {
   monthlyCategoryId: string | null = null;
   amount: number | null = null;
   note = '';
+  paymentMethod: PaymentMethod | null = null;
+  readonly paymentMethodLabels = PAYMENT_METHOD_LABELS;
   loading = true;
   saving = false;
   error: string | null = null;
@@ -48,6 +50,10 @@ export class ExpenseFormComponent implements OnInit {
       this.error = 'Indiquez un montant différent de zéro.';
       return;
     }
+    if (!this.paymentMethod) {
+      this.error = 'Indiquez si la dépense a été payée en cash ou par CB.';
+      return;
+    }
     if (!this.note.trim()) {
       this.error = 'Une note est obligatoire (ex : ce que vous avez acheté).';
       return;
@@ -61,6 +67,7 @@ export class ExpenseFormComponent implements OnInit {
         amount: this.amount,
         date: new Date().toISOString(),
         note: this.note.trim(),
+        paymentMethod: this.paymentMethod,
       });
       this.dashboardRefresh.notify();
       await this.modalCtrl.dismiss({ saved: true });

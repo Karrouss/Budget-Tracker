@@ -34,6 +34,10 @@
           <span class="label">Dépenses totales</span>
           <span class="total">{{ s.totalSpent | currencyFr }}</span>
           <span class="subtext">sur {{ s.totalBudget | currencyFr }} de budget</span>
+          <span class="subtext cash-subtext">
+            <ion-icon name="cash-outline"></ion-icon>
+            Dont {{ s.totalCash | currencyFr }} payés en cash
+          </span>
         </div>
         <div class="wallet-badge">
           <ion-icon name="wallet"></ion-icon>
