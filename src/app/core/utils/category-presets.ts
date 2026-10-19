@@ -19,15 +19,19 @@ export const CATEGORY_ICONS: string[] = [
   'ellipsis-horizontal',
 ];
 
+/**
+ * Kept visually distinct from one another (CIEDE2000 ΔE ≥ ~20 between any pair)
+ * and dark enough for the white category icon drawn on top.
+ */
 export const CATEGORY_COLORS: string[] = [
-  '#5e35b1',
-  '#d32f2f',
-  '#2e7d32',
-  '#1565c0',
-  '#ef6c00',
-  '#ad1457',
-  '#00796b',
-  '#4527a0',
+  '#5e35b1', // violet
+  '#1565c0', // bleu
+  '#00838f', // bleu canard
+  '#2e7d32', // vert
+  '#ef6c00', // orange
+  '#d32f2f', // rouge
+  '#ad1457', // framboise
+  '#6d4c41', // marron
 ];
 
 export const DEFAULT_CATEGORY_ICON = CATEGORY_ICONS[0];
