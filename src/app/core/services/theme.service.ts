@@ -22,9 +22,12 @@ export class ThemeService {
   }
 
   async toggle(): Promise<void> {
-    const next: ThemeMode = this.subject.value === 'dark' ? 'light' : 'dark';
-    this.apply(next);
-    await this.storage.setItem(STORAGE_KEY, next);
+    await this.set(this.subject.value === 'dark' ? 'light' : 'dark');
+  }
+
+  async set(mode: ThemeMode): Promise<void> {
+    this.apply(mode);
+    await this.storage.setItem(STORAGE_KEY, mode);
   }
 
   private async init(): Promise<void> {

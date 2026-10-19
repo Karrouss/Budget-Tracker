@@ -10,7 +10,8 @@ export class SettingsService {
 
   async get(): Promise<Settings> {
     const stored = await this.storage.getItem<Settings>(SETTINGS_KEY);
-    return stored ?? DEFAULT_SETTINGS;
+    // Merge so settings saved by older versions pick up newly added fields.
+    return { ...DEFAULT_SETTINGS, ...stored };
   }
 
   async update(patch: Partial<Settings>): Promise<Settings> {

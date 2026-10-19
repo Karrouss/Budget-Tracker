@@ -6,6 +6,7 @@ import { MonthService } from '../../../core/services/month.service';
 import { MonthlyCategoryService } from '../../../core/services/monthly-category.service';
 import { ExpenseService } from '../../../core/services/expense.service';
 import { DashboardRefreshService } from '../../../core/services/dashboard-refresh.service';
+import { BudgetAlertService } from '../../../core/services/budget-alert.service';
 import { dayStringToIso, firstDayOfCurrentMonthString, toDayString, todayDayString } from '../../../core/utils/date.util';
 import { CategoryFormComponent } from '../category-form/category-form.component';
 
@@ -41,6 +42,7 @@ export class ExpenseFormComponent implements OnInit {
     private readonly monthlyCategoryService: MonthlyCategoryService,
     private readonly expenseService: ExpenseService,
     private readonly dashboardRefresh: DashboardRefreshService,
+    private readonly budgetAlerts: BudgetAlertService,
   ) {}
 
   get isEdit(): boolean {
@@ -95,6 +97,9 @@ export class ExpenseFormComponent implements OnInit {
     this.error = null;
     this.saving = true;
     try {
+      const affected = [this.monthlyCategoryId, ...(this.expense ? [this.expense.monthlyCategoryId] : [])];
+      const before = await this.budgetAlerts.snapshot(affected);
+
       if (this.expense) {
         const dayChanged = this.day !== toDayString(new Date(this.expense.date));
         await this.expenseService.update(this.expense.id, {
@@ -116,6 +121,7 @@ export class ExpenseFormComponent implements OnInit {
       }
 
       this.dashboardRefresh.notify();
+      await this.budgetAlerts.notifyCrossings(before);
       await this.modalCtrl.dismiss({ saved: true });
       if (!this.expense) {
         await this.router.navigateByUrl('/dashboard');

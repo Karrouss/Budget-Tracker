@@ -1,9 +1,80 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>Plus</ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-content [fullscreen]="true" class="more-content">
+  <div class="page-header">
+    <h1>Plus</h1>
+  </div>
 
-<ion-content [fullscreen]="true">
-  <app-empty-state title="Bientôt disponible" message="Les réglages et options supplémentaires arrivent prochainement."></app-empty-state>
+  <ng-container *ngIf="settings">
+    <section class="card">
+      <h2>Apparence</h2>
+      <ion-item lines="none">
+        <ion-icon slot="start" name="moon-outline"></ion-icon>
+        <ion-toggle [checked]="darkMode" (ionChange)="setDarkMode($event.detail.checked)">Thème sombre</ion-toggle>
+      </ion-item>
+    </section>
+
+    <section class="card">
+      <h2>Rappels et alertes</h2>
+      <ion-item lines="full">
+        <ion-icon slot="start" name="notifications-outline"></ion-icon>
+        <ion-toggle
+          [checked]="settings.reminderEnabled"
+          [disabled]="!reminderSupported"
+          (ionChange)="setReminderEnabled($event.detail.checked)"
+        >
+          <ion-label>
+            Rappel quotidien
+            <p>Une notification chaque jour pour penser à noter vos dépenses</p>
+          </ion-label>
+        </ion-toggle>
+      </ion-item>
+      <ion-item lines="full" *ngIf="settings.reminderEnabled">
+        <ion-icon slot="start" name="time-outline"></ion-icon>
+        <ion-label>Heure du rappel</ion-label>
+        <ion-input
+          slot="end"
+          type="time"
+          class="time-input"
+          [value]="settings.reminderTime"
+          (ionChange)="setReminderTime($event.detail.value)"
+        ></ion-input>
+      </ion-item>
+      <p class="hint" *ngIf="!reminderSupported">Les rappels sont disponibles dans l'application mobile.</p>
+      <p class="hint error" *ngIf="reminderError">{{ reminderError }}</p>
+      <ion-item lines="none">
+        <ion-icon slot="start" name="warning-outline"></ion-icon>
+        <ion-toggle [checked]="settings.budgetAlertsEnabled" (ionChange)="setBudgetAlerts($event.detail.checked)">
+          <ion-label>
+            Alertes de budget
+            <p>Prévenir à 80 % et au dépassement d'une catégorie</p>
+          </ion-label>
+        </ion-toggle>
+      </ion-item>
+    </section>
+
+    <section class="card">
+      <h2>Mes données</h2>
+      <p class="hint">
+        Vos données sont stockées uniquement sur cet appareil. Exportez-les régulièrement pour ne pas les perdre en
+        cas de désinstallation ou de changement de téléphone.
+      </p>
+      <ion-button expand="block" (click)="exportData()" [disabled]="busy">
+        <ion-icon slot="start" name="download-outline"></ion-icon>
+        Exporter mes données
+      </ion-button>
+      <ion-button expand="block" fill="outline" (click)="fileInput.click()" [disabled]="busy">
+        <ion-icon slot="start" name="cloud-upload-outline"></ion-icon>
+        Importer une sauvegarde
+      </ion-button>
+      <input #fileInput type="file" accept="application/json,.json" hidden (change)="onFileSelected($event)" />
+    </section>
+
+    <section class="card">
+      <h2>Confidentialité</h2>
+      <p class="hint">
+        Budget Tracker fonctionne sans compte et sans connexion. Aucune donnée n'est envoyée sur internet : vos
+        catégories et dépenses restent sur votre appareil, et seul l'export crée une copie, à l'endroit que vous
+        choisissez.
+      </p>
+    </section>
+  </ng-container>
 </ion-content>

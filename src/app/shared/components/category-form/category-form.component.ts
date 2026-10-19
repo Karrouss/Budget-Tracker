@@ -8,6 +8,7 @@ import { ExpenseService } from '../../../core/services/expense.service';
 import { DashboardRefreshService } from '../../../core/services/dashboard-refresh.service';
 import { DEFAULT_CATEGORY_COLOR, DEFAULT_CATEGORY_ICON } from '../../../core/utils/category-presets';
 import { MonthService } from '../../../core/services/month.service';
+import { BudgetAlertService } from '../../../core/services/budget-alert.service';
 import { MonthlyCategoryRepository } from '../../../core/repositories/monthly-category.repository';
 import { dayStringToIso, firstDayOfCurrentMonthString, todayDayString } from '../../../core/utils/date.util';
 
@@ -54,6 +55,7 @@ export class CategoryFormComponent implements OnInit {
     private readonly dashboardRefresh: DashboardRefreshService,
     private readonly monthService: MonthService,
     private readonly monthlyCategoryRepo: MonthlyCategoryRepository,
+    private readonly budgetAlerts: BudgetAlertService,
   ) {}
 
   async ngOnInit(): Promise<void> {
@@ -136,6 +138,7 @@ export class CategoryFormComponent implements OnInit {
     this.expenseError = null;
     this.expenseSaving = true;
     try {
+      const before = await this.budgetAlerts.snapshot([this.category.monthlyCategoryId]);
       await this.expenseService.create({
         monthlyCategoryId: this.category.monthlyCategoryId,
         amount: this.expenseAmount,
@@ -144,6 +147,7 @@ export class CategoryFormComponent implements OnInit {
         paymentMethod: this.expensePaymentMethod,
       });
       this.dashboardRefresh.notify();
+      await this.budgetAlerts.notifyCrossings(before);
       await this.modalCtrl.dismiss({ saved: true });
     } finally {
       this.expenseSaving = false;
