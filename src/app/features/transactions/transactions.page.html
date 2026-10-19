@@ -22,19 +22,51 @@
       </button>
     </div>
 
+    <div class="filters" *ngIf="g.transactions.length > 0">
+      <ion-searchbar
+        [(ngModel)]="searchText"
+        placeholder="Rechercher une dépense"
+        [debounce]="150"
+        class="search"
+      ></ion-searchbar>
+      <div class="filter-row">
+        <ion-select
+          [(ngModel)]="categoryFilter"
+          interface="action-sheet"
+          [interfaceOptions]="{ header: 'Filtrer par catégorie' }"
+          placeholder="Toutes les catégories"
+          class="category-filter"
+          [class.active]="categoryFilter !== null"
+        >
+          <ion-select-option [value]="null">Toutes les catégories</ion-select-option>
+          <ion-select-option *ngFor="let c of categoryOptions" [value]="c.id">{{ c.name }}</ion-select-option>
+        </ion-select>
+        <ion-segment [(ngModel)]="paymentFilter" class="payment-filter">
+          <ion-segment-button value="all"><ion-label>Tous</ion-label></ion-segment-button>
+          <ion-segment-button value="cash"><ion-label>{{ paymentMethodLabels.cash }}</ion-label></ion-segment-button>
+          <ion-segment-button value="card"><ion-label>{{ paymentMethodLabels.card }}</ion-label></ion-segment-button>
+        </ion-segment>
+      </div>
+    </div>
+
     <div class="month-total-row" *ngIf="g.transactions.length > 0">
-      <span>Total du mois</span>
-      <span class="month-total">{{ g.total | currencyFr }}</span>
+      <span>{{ hasActiveFilters ? 'Total filtré' : 'Total du mois' }}</span>
+      <span class="month-total">{{ filteredTotal | currencyFr }}</span>
     </div>
     <div class="month-total-row cash-total-row" *ngIf="g.transactions.length > 0">
       <span><ion-icon name="cash-outline"></ion-icon> Dont payé en cash</span>
-      <span class="month-total">{{ g.totalCash | currencyFr }}</span>
+      <span class="month-total">{{ filteredCashTotal | currencyFr }}</span>
+    </div>
+
+    <div class="no-match" *ngIf="g.transactions.length > 0 && filteredTransactions.length === 0">
+      <p>Aucune dépense ne correspond à votre recherche.</p>
+      <ion-button fill="clear" size="small" (click)="resetFilters()">Réinitialiser les filtres</ion-button>
     </div>
 
     <div class="transaction-list" *ngIf="g.transactions.length > 0; else emptyState">
       <div
         class="transaction-row"
-        *ngFor="let t of g.transactions"
+        *ngFor="let t of filteredTransactions"
         [class.editable]="g.isCurrentMonth"
         (click)="g.isCurrentMonth && openEdit(t)"
       >

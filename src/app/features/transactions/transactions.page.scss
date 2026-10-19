@@ -57,6 +57,61 @@
   }
 }
 
+.filters {
+  padding: 12px 16px 0;
+
+  .search {
+    --background: var(--ion-color-light, #ffffff);
+    --border-radius: 14px;
+    --box-shadow: none;
+    padding: 0;
+  }
+}
+
+.filter-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+.category-filter {
+  flex: 1 1 140px;
+  min-height: 36px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: var(--ion-color-light, #ffffff);
+  font-size: 13px;
+  font-weight: 600;
+
+  &.active {
+    color: var(--gauge-normal, #7c4dff);
+  }
+}
+
+.payment-filter {
+  flex: 1 1 180px;
+  background: var(--ion-color-light, #ffffff);
+  border-radius: 999px;
+
+  ion-segment-button {
+    min-height: 36px;
+    font-size: 13px;
+  }
+}
+
+.no-match {
+  padding: 24px 16px 0;
+  text-align: center;
+  font-size: 14px;
+  color: var(--ion-color-medium, #5c5470);
+
+  p {
+    margin: 0 0 4px;
+  }
+}
+
 .month-total-row {
   display: flex;
   justify-content: space-between;

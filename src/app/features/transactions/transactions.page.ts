@@ -5,7 +5,8 @@ import { TransactionHistoryService } from '../../core/services/transaction-histo
 import { MonthService } from '../../core/services/month.service';
 import { DashboardRefreshService } from '../../core/services/dashboard-refresh.service';
 import { SelectedMonthService } from '../../core/services/selected-month.service';
-import { MonthTransactionsGroup, PAYMENT_METHOD_LABELS, TransactionViewModel } from '../../core/models';
+import { MonthTransactionsGroup, PAYMENT_METHOD_LABELS, PaymentMethod, TransactionViewModel } from '../../core/models';
+import { sum } from '../../core/utils/budget-calculations';
 import { ExpenseFormComponent } from '../../shared/components/expense-form/expense-form.component';
 
 @Component({
@@ -18,6 +19,10 @@ export class TransactionsPage implements OnInit, OnDestroy {
   group: MonthTransactionsGroup | null = null;
   loading = true;
   readonly paymentMethodLabels = PAYMENT_METHOD_LABELS;
+
+  searchText = '';
+  categoryFilter: string | null = null;
+  paymentFilter: PaymentMethod | 'all' = 'all';
 
   private monthKeys: string[] = [];
   private refreshSubscription?: Subscription;
@@ -56,8 +61,47 @@ export class TransactionsPage implements OnInit, OnDestroy {
     this.monthKeys = months.map((m) => m.monthKey).sort();
 
     this.group = await this.historyService.getForMonth(monthKey ?? this.selectedMonth.value);
+    // Drop a category filter that doesn't exist in the newly loaded month.
+    if (this.categoryFilter && !this.group.transactions.some((t) => t.monthlyCategoryId === this.categoryFilter)) {
+      this.categoryFilter = null;
+    }
     this.loading = false;
     this.selectedMonth.select(this.group.monthKey);
+  }
+
+  /** Categories that actually have expenses this month, for the category filter. */
+  get categoryOptions(): { id: string; name: string }[] {
+    const byId = new Map<string, string>();
+    for (const t of this.group?.transactions ?? []) byId.set(t.monthlyCategoryId, t.categoryName);
+    return [...byId].map(([id, name]) => ({ id, name })).sort((a, b) => a.name.localeCompare(b.name, 'fr'));
+  }
+
+  get hasActiveFilters(): boolean {
+    return !!this.searchText.trim() || this.categoryFilter !== null || this.paymentFilter !== 'all';
+  }
+
+  get filteredTransactions(): TransactionViewModel[] {
+    const query = normalize(this.searchText.trim());
+    return (this.group?.transactions ?? []).filter(
+      (t) =>
+        (this.categoryFilter === null || t.monthlyCategoryId === this.categoryFilter) &&
+        (this.paymentFilter === 'all' || t.paymentMethod === this.paymentFilter) &&
+        (!query || normalize(`${t.note ?? ''} ${t.categoryName}`).includes(query)),
+    );
+  }
+
+  get filteredTotal(): number {
+    return sum(this.filteredTransactions.map((t) => t.amount));
+  }
+
+  get filteredCashTotal(): number {
+    return sum(this.filteredTransactions.filter((t) => t.paymentMethod === 'cash').map((t) => t.amount));
+  }
+
+  resetFilters(): void {
+    this.searchText = '';
+    this.categoryFilter = null;
+    this.paymentFilter = 'all';
   }
 
   get canGoToPreviousMonth(): boolean {
@@ -113,4 +157,9 @@ export class TransactionsPage implements OnInit, OnDestroy {
       year: 'numeric',
     });
   }
+}
+
+/** Lower-case, accent-insensitive form used for searching ("Café" matches "cafe"). */
+function normalize(text: string): string {
+  return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
 }
